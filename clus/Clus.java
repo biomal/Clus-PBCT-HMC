@@ -23,6 +23,7 @@
 package clus;
 
 import clus.tools.debug.Debug;
+import clus.gui.*;
 import clus.io.ClusSerializable;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
@@ -91,7 +92,7 @@ public class Clus implements CMDLineArgsProvider {
 	protected Date m_StartDate = new Date();
 	protected boolean isxval = false;
 	protected CMDLineArgs m_CmdLine;
-
+        
         // ********************************
         // PBCT-HMC
         // author: @zamith
@@ -429,7 +430,7 @@ public class Clus implements CMDLineArgsProvider {
 		mgr.initSignifcanceTestingTable();
 	}
         // ********************************
-
+        
 	public final void preprocess(ClusData data) throws ClusException {
 		DataPreprocs pps = getPreprocs(false);
 		int nb = pps.getNbPasses();
@@ -894,7 +895,7 @@ public class Clus implements CMDLineArgsProvider {
 		}
 	}
 
-        // ********************************
+	// ********************************
         // PBCT
         // author: @zamith
 	public final void singleRun(ClusInductionAlgorithmType clss)
@@ -911,6 +912,7 @@ public class Clus implements CMDLineArgsProvider {
 		//io.save(getSettings().getFileAbsolute(m_Sett.getAppName() + ".model"));
 
 	}
+        // ********************************
 
 	/*
 	 * Run the prediction algorithm session once: train and possibly test and
@@ -1074,7 +1076,7 @@ public class Clus implements CMDLineArgsProvider {
 		return m_Sett.getAppName();
 	}
 
-        // ********************************
+	// ********************************
         // PBCT
         // author: @zamith
 	public static void main(String[] args) {

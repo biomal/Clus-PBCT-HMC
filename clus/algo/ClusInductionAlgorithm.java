@@ -134,6 +134,7 @@ public abstract class ClusInductionAlgorithm {
 		return stat;
 	}
         
+        
         // ********************************
         // PBCT-HMC
         // author: @zamith
@@ -153,5 +154,5 @@ public abstract class ClusInductionAlgorithm {
 		return m_VerticalStatManager;
 	}        
         // ********************************
-    
+
 }

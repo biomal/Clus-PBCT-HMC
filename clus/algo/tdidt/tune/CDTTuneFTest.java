@@ -199,7 +199,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 		getSettings().setFTest(m_FTests[best_value]);
 		System.out.println("Best F-test value is: "+m_FTests[best_value]);
 	}
-        
+
         // ********************************
         // PBCT-HMC
         // author: @zamith
@@ -298,7 +298,6 @@ public class CDTTuneFTest extends ClusDecisionTree {
                     
                 }
                 
-//                System.out.println(getSettings().getVerticalDataFile());
     } 
     // ********************************
 }

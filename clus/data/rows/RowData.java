@@ -795,5 +795,6 @@ public class RowData extends ClusData implements MSortable, Serializable {
             return m_Data;
         }
         
-        // ********************************           
+        // ********************************        
+        
 }

@@ -67,9 +67,6 @@ public class SubsetSplit extends NominalSplit {
 		System.out.println("}: "+mheur);
 	}
 
-        // ********************************
-        // PBCT-HMC
-        // author: @zamith
 	public void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type) {
 		//System.out.println("find split for attr: " + type);
 		double unk_freq = 0.0;
@@ -215,7 +212,6 @@ public class SubsetSplit extends NominalSplit {
 			node.addAlternativeBest(new SubsetTest(type, card, isin, pos_freq));
 		}
 	}
-        // ********************************
 
 	
   public void findRandomSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn) {

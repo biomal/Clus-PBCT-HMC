@@ -90,6 +90,7 @@ public class RegressionStat extends RegressionStatBase {
         }
         // ********************************
 
+
 	public void setTrainingStat(ClusStatistic train) {
 		m_Training = (RegressionStat)train;
 	}	

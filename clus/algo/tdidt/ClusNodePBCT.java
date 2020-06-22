@@ -52,10 +52,9 @@ import org.w3c.dom.Element;
 // PBCT-HMC
 // author: @zamith
 // ********************************
-
 public class ClusNodePBCT implements ClusModel {
-    protected ClusNode m_Node;
     protected ClusNode m_NodeVertical;
+    protected ClusNode m_NodeHorizontal;
     protected ClusStatManager m_StatManager;
     protected ClusStatManager m_VerticalStatManager;
     protected ClusSchema m_Schema;
@@ -81,7 +80,7 @@ public class ClusNodePBCT implements ClusModel {
     public ClusNodePBCT(ClusNode horizontal, ClusNode vertical, ClusStatManager stat, ClusStatManager verticalStat){
         m_Children.setSize(2);
         m_NodeVertical = vertical;
-        m_Node = horizontal;
+        m_NodeHorizontal = horizontal;
         m_StatManager = stat;
         m_VerticalStatManager = verticalStat;
         m_FindBestTest = new FindBestTest(m_StatManager);
@@ -91,7 +90,7 @@ public class ClusNodePBCT implements ClusModel {
     public ClusNodePBCT(ClusNode horizontal, ClusNode vertical, ClusStatManager stat, ClusStatManager verticalStat, ClusSchema schema, ClusSchema verticalSchema){
         m_Children.setSize(2);
         m_NodeVertical = vertical;
-        m_Node = horizontal;
+        m_NodeHorizontal = horizontal;
         m_StatManager = stat;
         m_VerticalStatManager = verticalStat;
         m_Schema = schema;
@@ -103,7 +102,7 @@ public class ClusNodePBCT implements ClusModel {
     public ClusNodePBCT(ClusNode horizontal, ClusNode vertical, ClusStatManager stat, ClusStatManager verticalStat, ClusSchema schema, ClusSchema verticalSchema, RowData data, RowData verticalData){
         m_Children.setSize(2);
         m_NodeVertical = vertical;
-        m_Node = horizontal;
+        m_NodeHorizontal = horizontal;
         m_StatManager = stat;
         m_VerticalStatManager = verticalStat;
         m_Schema = schema;
@@ -119,7 +118,7 @@ public class ClusNodePBCT implements ClusModel {
     }
     
     public ClusNode getNodeHorizontal(){
-        return m_Node;
+        return m_NodeHorizontal;
     }
     
     public ClusStatManager getStatManager(){
@@ -175,7 +174,7 @@ public class ClusNodePBCT implements ClusModel {
     }
     
     public void setNodeHorizontal(ClusNode node){
-        m_Node = node;
+        m_NodeHorizontal = node;
     }
     
     public void setStatManager(ClusStatManager stat){
@@ -208,8 +207,8 @@ public class ClusNodePBCT implements ClusModel {
 
     public ClusNodePBCT predictWeightedNode(DataTuple tupleHorizontal, DataTuple tupleVertical, int index) {
         if (atBottomLevel()) {           
-            double weight = this.m_Node.getTargetStat().getSumWeights(getArrayIndex(this.getGlobalIndexes(),index));
-            double value = this.m_Node.getTargetStat().getSumValues(getArrayIndex(this.getGlobalIndexes(),index));
+            double weight = this.m_NodeHorizontal.getTargetStat().getSumWeights(getArrayIndex(this.getGlobalIndexes(),index));
+            double value = this.m_NodeHorizontal.getTargetStat().getSumValues(getArrayIndex(this.getGlobalIndexes(),index));
             this.m_Mean = weight != 0.0 ? value / weight : 0.0;
             return this;
 	} else {
@@ -247,7 +246,6 @@ public class ClusNodePBCT implements ClusModel {
         ClusStatistic res = new RegressionStat(attrs, true, true);
             
         for(int i=0; i<nbTree; i++){
-            // Optimization
             if(!res.getFilled(i)) { 
                 ClusNodePBCT exit = predictWeightedNode(tuple, verticalData.getTuple(i),i);
                 if(!exit.m_HasUnkBranch){
@@ -264,6 +262,8 @@ public class ClusNodePBCT implements ClusModel {
         correctHierarchy((RegressionStat) res);
         return res;
     }
+    
+    
 
     @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
@@ -288,135 +288,136 @@ public class ClusNodePBCT implements ClusModel {
         return count;
     }
 
-    public final int getNbLeaves() {
-        int nb = getNbChildren();
-        if (nb == 0) {
-            return 1;
-        } else {
-            int count = 0;
-            for (int i = 0; i < nb; i++) {
-                    ClusNodePBCT node = getChild(i);
-                    count += node.getNbLeaves();
+	public final int getNbLeaves() {
+            int nb = getNbChildren();
+            if (nb == 0) {
+                    return 1;
+            } else {
+                    int count = 0;
+                    for (int i = 0; i < nb; i++) {
+                            ClusNodePBCT node = getChild(i);
+                            count += node.getNbLeaves();
+                    }
+                    return count;
             }
-            return count;
-        }
-    }
+	}
    
     public final int getNbChildren() {
         return m_Children.size();
     }    
     
     public final void removeAllChildren() {
-        int nb = getNbChildren();
-        for (int i = 0; i < nb; i++) {
-                ClusNodePBCT node = getChild(i);
-                node.setParent(null);
-        }
-        m_Children.removeAllElements();
-    }
+		int nb = getNbChildren();
+		for (int i = 0; i < nb; i++) {
+			ClusNodePBCT node = getChild(i);
+			node.setParent(null);
+		}
+		m_Children.removeAllElements();
+	}
 
     public void printModel(PrintWriter wrt) {
         printTree(wrt, StatisticPrintInfo.getInstance(), "");
     }
 
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
-        printTree(wrt, info, "");
+            printTree(wrt, info, "");
     }
 
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
-        printTree(wrt, info, "", examples);
+            printTree(wrt, info, "", examples);
     }
 
 
     public final void printTree() {
-        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(System.out));
-        printTree(wrt, StatisticPrintInfo.getInstance(), "");
-        wrt.flush();
+            PrintWriter wrt = new PrintWriter(new OutputStreamWriter(System.out));
+            printTree(wrt, StatisticPrintInfo.getInstance(), "");
+            wrt.flush();
     }
 
-    public final void writeDistributionForInternalNode(PrintWriter writer, StatisticPrintInfo info) {
-        if (info.INTERNAL_DISTR) {
-            if (getCorrespondingNode().m_TargetStat != null) {
-                    writer.print(": "+getCorrespondingNode().m_TargetStat.getString(info));
-            }
-        }
-        writer.println();
-    }
-
-    public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix) {
-        printTree( writer,  info,  prefix, null);
-    }
-
-    public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix, RowData examples) {
-        int arity = getNbChildren();
-        if (arity > 0) {			
-            int delta = getCorrespondingNode().hasUnknownBranch() ? 1 : 0;
-            if (arity - delta == 2) {
-                writer.print(getCorrespondingNode().m_Test.getTestString());
-                RowData examples0 = null;
-                RowData examples1 = null;
-                if (examples!=null){
-                    examples0 = examples.apply(getCorrespondingNode().m_Test, 0);
-                    examples1 = examples.apply(getCorrespondingNode().m_Test, 1);
-                }				
-                writeDistributionForInternalNode(writer, info);
-                writer.print(prefix + "+--yes: ");
-                ((ClusNodePBCT)getChild(YES)).printTree(writer, info, prefix+"|       ",examples0);
-                writer.print(prefix + "+--no:  ");
-                if (getCorrespondingNode().hasUnknownBranch()) {
-                    ((ClusNodePBCT)getChild(NO)).printTree(writer, info, prefix+"|       ",examples1);
-                    writer.print(prefix + "+--unk: ");
-                    ((ClusNodePBCT)getChild(UNK)).printTree(writer, info, prefix+"        ",examples0);
-                } else {
-                    ((ClusNodePBCT)getChild(NO)).printTree(writer, info, prefix+"        ",examples1);
-                }
-            } else {				
-                writer.println(getCorrespondingNode().m_Test.getTestString());				
-                for (int i = 0; i < arity; i++) {
-                    ClusNodePBCT child = (ClusNodePBCT)getChild(i);
-                    String branchlabel = getCorrespondingNode().m_Test.getBranchLabel(i);
-                    RowData examplesi = null;
-                    if (examples!=null){
-                            examples.apply(getCorrespondingNode().m_Test, i);
-                    }
-                    writer.print(prefix + "+--" + branchlabel + ": ");
-                    String suffix = StringUtils.makeString(' ', branchlabel.length()+4);
-                    if (i != arity-1) {
-                            child.printTree(writer, info, prefix+"|"+suffix,examplesi);
-                    } else {
-                            child.printTree(writer, info, prefix+" "+suffix,examplesi);
-                    }
+	public final void writeDistributionForInternalNode(PrintWriter writer, StatisticPrintInfo info) {
+            if (info.INTERNAL_DISTR) {
+                if (getCorrespondingNode().m_TargetStat != null) {
+                        writer.print(": "+getCorrespondingNode().m_TargetStat.getString(info));
                 }
             }
-        } else {//on the leaves
-            if (getCorrespondingNode().m_TargetStat == null) {
-                writer.print("?");
-            } else {				
-                writer.print(getCorrespondingNode().m_TargetStat.getString(info));				
-            }
-
             writer.println();
-            if (examples!=null && examples.getNbRows()>0){
-                writer.println(examples.toString(prefix));
-                writer.println(prefix+"Summary:");
-                writer.println(examples.getSummary(prefix));
-            }
-        }
-    }
+	}
 
-    public String printTestNode(String a, int pres){
-            if(pres == 1) {return a;}
-            else {return ("not("+a+")");}
-    }
+	public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix) {
+		printTree( writer,  info,  prefix, null);
+	}
 
-    public String toString() {
-        try{
-            if (m_Node.hasBestTest()) return m_Node.getTestString();
-            else return m_Node.m_TargetStat.getSimpleString();
-        }
-        catch(Exception e){return "null clusnode ";}
-    }
-    
+	public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix, RowData examples) {
+		int arity = getNbChildren();
+		if (arity > 0) {			
+			int delta = getCorrespondingNode().hasUnknownBranch() ? 1 : 0;
+			if (arity - delta == 2) {
+				writer.print(getCorrespondingNode().m_Test.getTestString());
+				RowData examples0 = null;
+				RowData examples1 = null;
+				if (examples!=null){
+					examples0 = examples.apply(getCorrespondingNode().m_Test, 0);
+					examples1 = examples.apply(getCorrespondingNode().m_Test, 1);
+				}				
+				writeDistributionForInternalNode(writer, info);
+				writer.print(prefix + "+--yes: ");
+				((ClusNodePBCT)getChild(YES)).printTree(writer, info, prefix+"|       ",examples0);
+				writer.print(prefix + "+--no:  ");
+				if (getCorrespondingNode().hasUnknownBranch()) {
+					((ClusNodePBCT)getChild(NO)).printTree(writer, info, prefix+"|       ",examples1);
+					writer.print(prefix + "+--unk: ");
+					((ClusNodePBCT)getChild(UNK)).printTree(writer, info, prefix+"        ",examples0);
+				} else {
+					((ClusNodePBCT)getChild(NO)).printTree(writer, info, prefix+"        ",examples1);
+				}
+			} else {				
+				writer.println(getCorrespondingNode().m_Test.getTestString());				
+				for (int i = 0; i < arity; i++) {
+					ClusNodePBCT child = (ClusNodePBCT)getChild(i);
+					String branchlabel = getCorrespondingNode().m_Test.getBranchLabel(i);
+					RowData examplesi = null;
+					if (examples!=null){
+						examples.apply(getCorrespondingNode().m_Test, i);
+					}
+					writer.print(prefix + "+--" + branchlabel + ": ");
+					String suffix = StringUtils.makeString(' ', branchlabel.length()+4);
+					if (i != arity-1) {
+						child.printTree(writer, info, prefix+"|"+suffix,examplesi);
+					} else {
+						child.printTree(writer, info, prefix+" "+suffix,examplesi);
+					}
+				}
+			}
+		} else {//on the leaves
+			if (getCorrespondingNode().m_TargetStat == null) {
+				writer.print("?");
+			} else {				
+				writer.print(getCorrespondingNode().m_TargetStat.getString(info));				
+			}
+			//if (getID() != 0 && info.SHOW_INDEX) writer.println(" ("+getID()+")");
+			//else writer.println();
+                        writer.println();
+			if (examples!=null && examples.getNbRows()>0){
+				writer.println(examples.toString(prefix));
+				writer.println(prefix+"Summary:");
+				writer.println(examples.getSummary(prefix));
+			}
+
+		}
+	}
+
+	public String printTestNode(String a, int pres){
+		if(pres == 1) {return a;}
+		else {return ("not("+a+")");}
+	}
+
+	public String toString() {
+		try{
+			if (m_NodeHorizontal.hasBestTest()) return m_NodeHorizontal.getTestString();
+			else return m_NodeHorizontal.m_TargetStat.getSimpleString();
+		}
+		catch(Exception e){return "null clusnode ";}
+	}
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -453,7 +454,7 @@ public class ClusNodePBCT implements ClusModel {
     }
     
     protected final boolean atBottomLevel() {
-	return ((m_Node.getNbChildren() == 0)&&(m_NodeVertical.getNbChildren() == 0));
+	return ((m_NodeHorizontal.getNbChildren() == 0)&&(m_NodeVertical.getNbChildren() == 0));
     }
     
     protected final ClusNode getCorrespondingNode() {
@@ -461,7 +462,7 @@ public class ClusNodePBCT implements ClusModel {
             return m_NodeVertical;
         }
         else{
-            return m_Node;
+            return m_NodeHorizontal;
         }
     }
     
@@ -492,14 +493,15 @@ public class ClusNodePBCT implements ClusModel {
     }
     
     public int[] getGlobalIndexes(){
-        return m_GlobalIndexes;
+            return m_GlobalIndexes;
     }
     
     public void initializeGlobalIndexes(int size){
-        m_GlobalIndexes = new int[size];
-        for(int i=0; i<size; i++){
-            m_GlobalIndexes[i] = i;
-        } 
+            m_GlobalIndexes = new int[size];
+            for(int i=0; i<size; i++){
+                m_GlobalIndexes[i] = i;
+            } 
+        
     }
     
     public void infNode(int split, int[] indexesYes) {
@@ -508,23 +510,23 @@ public class ClusNodePBCT implements ClusModel {
      }
     
     public int[] getGlobal(int[] parentGlobalIndexes, int[] indexesYes) {
-        int[] indexesGlobal = new int[indexesYes.length];
-        for(int i = 0; i<indexesYes.length; i++){
-            indexesGlobal[i]=parentGlobalIndexes[indexesYes[i]];
-        }
-        return indexesGlobal;
+            int[] indexesGlobal = new int[indexesYes.length];
+            for(int i = 0; i<indexesYes.length; i++){
+                indexesGlobal[i]=parentGlobalIndexes[indexesYes[i]];
+            }
+            return indexesGlobal;
     }
     
     public int getArrayIndex(int[] arr,int value) {
-        int k=-1;
-        for(int i=0;i<arr.length;i++){
-            if(arr[i]==value){
-                k=i;
-                break;
+            int k=-1;
+            for(int i=0;i<arr.length;i++){
+                if(arr[i]==value){
+                    k=i;
+                    break;
+                }
             }
-        }
-        return k;
-    } 
+            return k;
+        } 
 
     @Override
     public ClusStatistic predictWeighted(DataTuple tuple) {
@@ -543,29 +545,39 @@ public class ClusNodePBCT implements ClusModel {
         res.m_VerticalSchema = this.m_VerticalSchema;
         res.m_StatManager = this.m_StatManager;
         res.m_VerticalStatManager = this.m_VerticalStatManager;
+        /*res.m_StatManager = new ClusStatManager(res.m_Schema,res.getSchema().getSettings());
+        res.m_StatManager.initStatisticAndStatManager();
+	res.m_StatManager.initHeuristic();
+        res.m_StatManager.initStopCriterion();
+        res.m_VerticalStatManager = new ClusStatManager(res.m_VerticalSchema,res.getVerticalSchema().getSettings());
+	res.m_VerticalStatManager.initHeuristic();
+        res.m_VerticalStatManager.initStopCriterion();
+        res.m_VerticalStatManager.initStatisticAndStatManager();*/
         res.m_FindBestTest = new FindBestTest(m_StatManager);
         res.m_FindVerticalBestTest = new FindBestTest(m_VerticalStatManager);
-        res.m_Node = this.m_Node;
+        res.m_NodeHorizontal = this.m_NodeHorizontal;
         res.m_NodeVertical = this.m_NodeVertical;
+        
         return res;
     }
     
     public void correctHierarchy(RegressionStat pred){
         String hSeparator = this.m_Schema.getSettings().getHierSep();
         for(int i=0; i<pred.m_NbAttrs; i++){
-            String className = pred.m_Attrs[i].getName()+hSeparator;
-            for(int j=i+1; j<pred.m_NbAttrs; j++){
-               String anotherClass = pred.m_Attrs[j].getName()+hSeparator;
-               if((className.length()<anotherClass.length())&&(className.equals(anotherClass.substring(0,className.length())))){
-                   if(pred.getMean(j)>pred.getMean(i)){
-                       pred.m_SumWeights[j]=pred.m_SumWeights[i];
-                       pred.m_Means[j]=pred.m_Means[i];
+                String className = pred.m_Attrs[i].getName()+hSeparator;
+                for(int j=i+1; j<pred.m_NbAttrs; j++){
+                   String anotherClass = pred.m_Attrs[j].getName()+hSeparator;
+                   if((className.length()<anotherClass.length())&&(className.equals(anotherClass.substring(0,className.length())))){
+                       if(pred.getMean(j)>pred.getMean(i)){
+                           pred.m_SumWeights[j]=pred.m_SumWeights[i];
+                           pred.m_Means[j]=pred.m_Means[i];
+                       }
                    }
-               }
-               else{
-                   break;
-               }
-            }       
+                   else{
+                       break;
+                   }
+                }
+                
         }
     }
     

@@ -76,16 +76,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
 	}
 
-        // ********************************
-        // PBCT-HMC
-        // author: @zamith
 	public ClusAttrType[] getDescriptiveAttributes() {
 		ClusSchema schema = getSchema();
 		Settings sett = getSettings();
 		return schema.getDescriptiveAttributes();
 	}
-        // ********************************
-	
+
 	public void filterAlternativeSplits(ClusNode node, RowData data, RowData[] subsets) {
 		boolean removed = false;
 		CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();

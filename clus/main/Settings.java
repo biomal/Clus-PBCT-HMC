@@ -764,8 +764,6 @@ public class Settings implements Serializable {
 	}
         // ********************************
 	
-	
-	
 	public int getTreeMaxDepth() {
 		return m_TreeMaxDepth.getValue();
 	}
@@ -2269,9 +2267,7 @@ public class Settings implements Serializable {
                 // PBCT-HMC
                 // author: @zamith
                 m_SectionTree.addNode(m_PBCT = new INIFileBool("PBCT", false));
-                // *********************************	
-                
-		
+                // *********************************		
 		
 		m_SectionRules = new INIFileSection("Rules");
 		m_SectionRules.addNode(m_CoveringMethod = new INIFileNominal("CoveringMethod", COVERING_METHODS, 0));

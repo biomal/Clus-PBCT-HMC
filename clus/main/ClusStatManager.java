@@ -398,9 +398,6 @@ public class ClusStatManager implements Serializable {
 		}
 	}
 
-        // ********************************
-        // PBCT-HMC
-        // author: @zamith
 	public void initHeuristic() throws ClusException {
 		// All rule learning heuristics should go here, except for rules from trees
 		if (m_Mode == MODE_HIERARCHICAL) {
@@ -463,7 +460,6 @@ public class ClusStatManager implements Serializable {
 		else {
 		}
 	}
-        // ********************************
 
 	public void initStopCriterion() {
 		ClusStopCriterion stop = null;
@@ -832,11 +828,11 @@ public class ClusStatManager implements Serializable {
 		}
 	}
         
+        
         // ********************************
         // PBCT-HMC
         // author: @zamith
         public void initClusteringWeights(String[] names) throws ClusException {           
-                //int begin = m_Schema.getNbDescriptiveAttributes();
                 NumericAttrType[] attrs = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
                 double[] res = new double[attrs.length];
                 String hSeparator = getSettings().getHierSep();
@@ -851,7 +847,6 @@ public class ClusStatManager implements Serializable {
                     }
                 
                     res[i]=Math.pow(getSettings().getHierWParam(), (double)depth[i]);
-                    //System.out.println("Attr = "+attrs[i-begin]+" depth = "+depth[i]+" weight = "+res[i]);
                 }
                 
                 int nb_attrs = m_Schema.getNbAttributes();
@@ -865,5 +860,5 @@ public class ClusStatManager implements Serializable {
                 m_Heuristic.setClusteringWeights(m_ClusteringWeights);
 	}
         // ********************************
-
+        
 }

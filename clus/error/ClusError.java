@@ -312,4 +312,5 @@ public abstract class ClusError implements Serializable {
         }
         
         // ********************************
+
 }

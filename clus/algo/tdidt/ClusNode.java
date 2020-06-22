@@ -861,4 +861,8 @@ public class ClusNode extends MyNode implements ClusModel {
     public ClusStatistic predictWeighted(DataTuple tuple, RowData m_VerticalData) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
+    
+    
 }

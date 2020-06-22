@@ -131,9 +131,6 @@ public class FTest {
 	}
 
 	// Calling getCriticalFCommonsMath() is slow, so build a table
-        // ********************************
-        // PBCT-HMC
-        // author: @zamith
 	public static void initializeFTable(double sig) {
 		int df = 3;
 		double value = 0.0;
@@ -151,7 +148,6 @@ public class FTest {
 			FTEST_VALUE[i+3] = ((Double)values.get(i)).doubleValue();
 		}
 	}
-        // ********************************
 
 	// ftest: Signif, total SS, residual SS, 2nd DF (1st is 1)
 	// (this implementation only works for F tests with 1 and n d.f., sorry)

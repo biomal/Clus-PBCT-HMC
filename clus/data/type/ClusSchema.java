@@ -22,13 +22,8 @@
 
 package clus.data.type;
 
-// ********************************
-// PBCT-HMC
-// author: @zamith
 import static clus.Clus.HORIZONTAL_DATA;
 import static clus.Clus.VERTICAL_DATA;
-// ********************************
-
 import jeans.util.*;
 
 import java.io.*;
@@ -68,12 +63,6 @@ public class ClusSchema implements Serializable {
 	protected IntervalCollection m_Key = IntervalCollection.EMPTY;
 	protected int[] m_NbVt;
         
-        // ********************************
-        // PBCT-HMC
-        // author: @zamith
-        protected int m_TypeData;
-        // ********************************
-        
         public ClusSchema(String name) {
 		m_Relation = name;
 	}
@@ -82,12 +71,18 @@ public class ClusSchema implements Serializable {
 		m_Relation = name;
 		addFromString(descr);
 	}
+
+        // ********************************
+        // PBCT-HMC
+        // author: @zamith
+        protected int m_TypeData;
+        // ********************************
         
         public void setSettings(Settings sett) {
 		m_Settings = sett;
 	}
-        
-        // ********************************
+
+                // ********************************
         // PBCT-HMC
         // author: @zamith
         public void setTypeData(int type){
@@ -120,7 +115,7 @@ public class ClusSchema implements Serializable {
             this.addIndices(ClusSchema.ROWS);
 	}
         // ********************************
-
+        
 	public void initialize() throws ClusException, IOException {
 		updateAttributeUse();
 		addIndices(ClusSchema.ROWS);
@@ -879,16 +874,4 @@ public class ClusSchema implements Serializable {
         }
         // ********************************
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 }

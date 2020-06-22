@@ -133,9 +133,6 @@ public class ClusOutput {
 		writeOutput(cr, detail, false);
 	}	
 
-        // ********************************
-        // PBCT-HMC
-        // author: @zamith
 	public void writeOutput(ClusRun cr, boolean detail, boolean outputtrain) throws IOException, ClusException {
 		ArrayList models = new ArrayList();
 		String ridx = cr.getIndexString();
@@ -239,8 +236,7 @@ public class ClusOutput {
 		}
 		m_Writer.flush();
 	}
-        // ********************************
-        
+
 	public String getQuotient(int a, int b) {
 		double val = b == 0 ? 0.0 : (double)a/b;
 		return ClusFormat.ONE_AFTER_DOT.format(val);

@@ -52,11 +52,7 @@ public interface ClusModel {
     public static int TRAIN = 0;
     public static int TEST = 1;
 
-        // ********************************
-        // PBCT-HMC
-        // author: @zamith
 	public ClusStatistic predictWeighted(DataTuple tuple);
-        // ********************************
 
 	public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException;
 
@@ -83,6 +79,10 @@ public interface ClusModel {
 	public ClusModel prune(int prunetype);
 
 	public int getID();
-
+        
+        // ********************************
+        // PBCT-HMC
+        // author: @zamith
         public ClusStatistic predictWeighted(DataTuple tuple, RowData m_VerticalData);
+        // ********************************
 }
