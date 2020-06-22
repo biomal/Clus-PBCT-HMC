@@ -23,7 +23,6 @@
 package clus;
 
 import clus.tools.debug.Debug;
-import clus.gui.*;
 import clus.io.ClusSerializable;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;

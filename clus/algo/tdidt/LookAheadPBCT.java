@@ -126,15 +126,17 @@ public class LookAheadPBCT extends ClusInductionAlgorithm {
         attrs = getDescriptiveAttributes(node,VERTICAL_DATA);
         double bestVertical = Double.NEGATIVE_INFINITY;
         ClusAttrType bestAttrVertical = null;
-        for (int i = 0; i < attrs.length; i++) {
-            ClusAttrType at = attrs[i];
-            node.getVerticalFindBestTest().m_BestTest.resetBestTest();
-            node.getVerticalFindBestTest().findNumeric((NumericAttrType)at, node.getVerticalData());
-            if (node.getVerticalFindBestTest().getBestTest().hasBestTest()){
-                double heur = induceLookAhead(node);
-                if(heur>=bestVertical){
-                    bestVertical=heur;
-                    bestAttrVertical=at;
+        if(!(node.hasParent() && node.getParent().m_TypeSplit == VERTICAL_SPLIT)){
+            for (int i = 0; i < attrs.length; i++) {
+                ClusAttrType at = attrs[i];
+                node.getVerticalFindBestTest().m_BestTest.resetBestTest();
+                node.getVerticalFindBestTest().findNumeric((NumericAttrType)at, node.getVerticalData());
+                if (node.getVerticalFindBestTest().getBestTest().hasBestTest()){
+                    double heur = induceLookAhead(node);
+                    if(heur>=bestVertical){
+                        bestVertical=heur;
+                        bestAttrVertical=at;
+                    }
                 }
             }
         }
