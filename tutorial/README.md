@@ -20,6 +20,11 @@ A sample settings file can be found in the same ``dist/`` folder.
 If you are used to regular Clus settings files, just include the following parameter:
 
 ``` 
+[Hierarchical]
+Type = TREE
+HSeparator = /
+WType = ExpAvgParentWeight
+
 [Tree]
 PBCT = Yes
 ``` 
